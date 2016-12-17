@@ -26,8 +26,9 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
 2.在项目只能够创建一个数据库连接，如下:
 
     var mongoose = require('mongoose');    //引用mongoose模块
-    ~~var db = mongoose.createConnection('localhost','test'); //创建一个数据库连接~~
     mongoose.connect('mongodb://localhost:27017/test')
+   ~~var db = mongoose.createConnection('localhost','test'); //创建一个数据库连接~~
+    
 3.打开本机localhost的test数据库时，我们可以监测是否有异常
 
     db.on('error',console.error.bind(console,'连接错误:'));
@@ -47,7 +48,7 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
 
     var PersonModel = mongoose.model('Person',PersonSchema);
     //如果该Model已经发布，则可以直接通过名字索引到，如下：
-    //var PersonModel = mongoose.model('Person');
+    //var PersonModel = new mongoose.model('Person');
     //如果没有发布，上一段代码将会异常
 6.用Model创建Entity
 
@@ -60,7 +61,7 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
     PersonSchema.methods.speak = function(){
       console.log('我的名字叫'+this.name);
     }
-    var PersonModel = mongoose.model('Person',PersonSchema);
+    var PersonModel = new mongoose.model('Person',PersonSchema);
     var personEntity = new PersonModel({name:'Krouky'});
     personEntity.speak();//我的名字叫Krouky
 8.Entity是具有具体的数据库操作CRUD的
