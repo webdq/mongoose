@@ -1,4 +1,4 @@
-[mongoose转自a272121742](http://cnodejs.org/topic/504b4924e2b84515770103dd)
+> [mongoose转自a272121742](http://cnodejs.org/topic/504b4924e2b84515770103dd)
 
 ##一、快速通道
 
@@ -26,7 +26,8 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
 2.在项目只能够创建一个数据库连接，如下:
 
     var mongoose = require('mongoose');    //引用mongoose模块
-    var db = mongoose.createConnection('localhost','test'); //创建一个数据库连接
+    ~~var db = mongoose.createConnection('localhost','test'); //创建一个数据库连接~~
+    mongoose.connect('mongodb://localhost:27017/test')
 3.打开本机localhost的test数据库时，我们可以监测是否有异常
 
     db.on('error',console.error.bind(console,'连接错误:'));
@@ -44,9 +45,9 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
     });
 5.将该Schema发布为Model
 
-    var PersonModel = db.model('Person',PersonSchema);
+    var PersonModel = mongoose.model('Person',PersonSchema);
     //如果该Model已经发布，则可以直接通过名字索引到，如下：
-    //var PersonModel = db.model('Person');
+    //var PersonModel = mongoose.model('Person');
     //如果没有发布，上一段代码将会异常
 6.用Model创建Entity
 
@@ -56,10 +57,10 @@ Entity  ：  由Model创建的实体，他的操作也会影响数据库
 7.我们甚至可以为此Schema创建方法
 
     //为Schema模型追加speak方法
-    PersonSchema.methos.speak = function(){
+    PersonSchema.methods.speak = function(){
       console.log('我的名字叫'+this.name);
     }
-    var PersonModel = db.model('Person',PersonSchema);
+    var PersonModel = mongoose.model('Person',PersonSchema);
     var personEntity = new PersonModel({name:'Krouky'});
     personEntity.speak();//我的名字叫Krouky
 8.Entity是具有具体的数据库操作CRUD的
@@ -179,7 +180,7 @@ Schema可以定义插件，并且插件具有良好的可拔插性，请有兴�
 使用如下：
 
     var PersonModel = mongoose.model('Person',PersonSchema);
-    var krouky = new PersonSchema({name:'krouky',type:'前端工程师'});
+    var krouky = new PersonModel({name:'krouky',type:'前端工程师'});
     krouky.findSimilarTypes(function(err,persons){
       //persons中就能查询到其他前端工程师
     });
@@ -187,13 +188,13 @@ Schema可以定义插件，并且插件具有良好的可拔插性，请有兴�
 
 静态方法在Model层就能使用，如下：
 
-  PersonSchema.statics.findByName = function(name,cb){
-    this.find({name:new RegExp(name,'i'),cb});
-  }
-  var PersonModel = mongoose.model('Person',PersonSchema);
-  PersonModel.findByName('krouky',function(err,persons){
-    //找到所有名字叫krouky的人
-  });
+    PersonSchema.statics.findByName = function(name,cb){
+      this.find({name:new RegExp(name,'i'),cb});
+    }
+    var PersonModel = mongoose.model('Person',PersonSchema);
+    PersonModel.findByName('krouky',function(err,persons){
+      //找到所有名字叫krouky的人
+    });
 ####2.3 索引
 
 索引或者复合索引能让搜索更加高效，默认索引就是主键索引ObjectId，属性名为_id， 索引会作为一个专题来讲解
@@ -202,7 +203,7 @@ Schema可以定义插件，并且插件具有良好的可拔插性，请有兴�
 
 Schema中如果定义了虚拟属性，那么该属性将不写入数据库，例如：
 
-    var PersonSchema = new Schema({
+    var PersonSchema = new mongoose.Schema({
       name:{
         first:String,
         last:String
